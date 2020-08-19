@@ -1,5 +1,5 @@
 # hotBF-Repo
-maven repo for “https://github.com/quieoo/hotBF”
+maven repo for https://github.com/quieoo/hotBF
 
 ## usage
 ```
