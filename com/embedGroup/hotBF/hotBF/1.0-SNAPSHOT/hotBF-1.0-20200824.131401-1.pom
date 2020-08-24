@@ -1,0 +1,138 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.embedGroup.hotBF</groupId>
+  <artifactId>hotBF</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>hotBF</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <github.global.server>github</github.global.server>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.iota</groupId>
+      <artifactId>jota</artifactId>
+      <version>1.0.0-beta9</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/jota-1.0.0-beta9-jar-with-dependencies.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.zeromq</groupId>
+      <artifactId>jeromq</artifactId>
+      <version>0.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.embedGroup.metrics</groupId>
+      <artifactId>metrics</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+      <artifactId>concurrentlinkedhashmap-lru</artifactId>
+      <version>1.4.2</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <archive>
+            <manifest>
+              <mainClass>com.embedGroup.hotBF.App</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.jolira</groupId>
+        <artifactId>onejar-maven-plugin</artifactId>
+        <version>1.4.4</version>
+        <executions>
+          <execution>
+            <configuration>
+              <attachToBuild>true</attachToBuild>
+              <classifier>onejar</classifier>
+            </configuration>
+            <goals>
+              <goal>one-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!--打包插件-->
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+            <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/repository</altDeploymentRepository>
+        </configuration>
+    </plugin>
+    <!--源码-->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <version>2.2.1</version>
+      <executions>
+          <execution>
+              <id>attach-sources</id>
+              <goals>
+                  <goal>jar-no-fork</goal>
+              </goals>
+          </execution>
+      </executions>
+  </plugin>
+
+  <!--github上传插件,用于修改后的发布,执行 mvn clean deploy 自动打包上传到github-->
+  <plugin>
+      <groupId>com.github.github</groupId>
+      <artifactId>site-maven-plugin</artifactId>
+      <version >0.12</version>
+      <configuration>
+          <message >Maven artifacts for ${project.version}</message>
+          <noJekyll>true</noJekyll>
+          <!--本地jar地址-->
+          <outputDirectory>${project.build.directory}/repository</outputDirectory>
+          <!--分支-->
+          <branch>refs/heads/master</branch>
+          <merge>true</merge>
+
+          <includes>
+              <include>**/*</include>
+          </includes>
+          <!--对应github上创建的仓库名称 name-->
+          <repositoryName>hotBF-Repo</repositoryName>
+          <!--github 仓库所有者 不是账号-->
+          <repositoryOwner>quieoo</repositoryOwner>
+      </configuration>
+
+      <executions>
+          <execution>
+              <goals>
+                  <goal>site</goal>
+              </goals>
+              <phase>deploy</phase>
+          </execution>
+      </executions>
+  </plugin>
+    </plugins>
+  </build>
+</project>
